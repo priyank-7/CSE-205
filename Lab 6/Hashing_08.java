@@ -1,5 +1,3 @@
-package com.company;
-
 class Node{
     int data;
     Node next;
@@ -67,7 +65,11 @@ class Servers {
             if (hash_table[servers[i]] != null) {
                 Node temp = hash_table[i];
                 while (temp != null) {
-                    re_allocate(temp, reHashing(temp.data));
+                    int index = reHashing(temp.data);
+                    while(contains(index)) {
+                        index = (index+1) % re_M;
+                    }
+                    re_allocate(temp, index);
                     temp = temp.next;
                 }
                 hash_table[servers[i]].next = null;
@@ -79,6 +81,7 @@ class Servers {
     private void re_allocate(Node node, int index){
         if(hash_table[index] == null){
             hash_table[index] = node;
+            return;
         }
         Node temp = hash_table[index];
         while(temp.next != null){
@@ -88,7 +91,7 @@ class Servers {
     }
 
     public boolean find(int val){
-        if(contains(val)){
+        if(contains(hashing(val))){
             return findNode(val, reHashing(val));
         }
         return findNode(val, hashing(val));
@@ -106,24 +109,4 @@ class Servers {
         return false;
     }
 
-}
-public class Hashing_08 {
-    public static void main(String[] args) {
-        int [] arr = new int [126];
-        for (int i = 0; i < 126; i++) {
-            arr[i] = i+1;
-        }
-
-        Servers s = new Servers(17);
-        for (int i = 0; i < 126; i++) {
-            s.add(arr[i]);
-        }
-
-        s.crashed_servers(new int[]{1,2,3,4});
-        System.out.println(s.find(5));
-        System.out.println(s.find(12));
-        System.out.println(s.find(126));
-        System.out.println(s.find(127));
-
-    }
 }
